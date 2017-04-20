@@ -1,0 +1,11 @@
+Changes
+Makefile.PL
+MANIFEST
+FASTPBKDF2.xs
+lib/Crypt/OpenSSL/FASTPBKDF2.pm
+README
+typemap
+ppport.h
+fastpbkdf2.h
+fastpbkdf2.o
+t/Crypt-OpenSSL-FASTPBKDF2.t
