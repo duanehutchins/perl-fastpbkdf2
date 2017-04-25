@@ -18,7 +18,7 @@ require DynaLoader;
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
-
+  fastpbkdf2_hmac_sha1 fastpbkdf2_hmac_sha256 fastpbkdf2_hmac_sha512
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -28,7 +28,6 @@ our @EXPORT = qw(
 );
 
 $VERSION = '0.01';
-print "\nfast loaded\n\n";
 # require XSLoader;
 # XSLoader::load('Crypt::OpenSSL::FASTPBKDF2', $VERSION);
 

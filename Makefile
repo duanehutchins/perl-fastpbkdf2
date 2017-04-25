@@ -14,14 +14,14 @@
 #     ABSTRACT_FROM => q[lib/Crypt/OpenSSL/FASTPBKDF2.pm]
 #     AUTHOR => [q[Duane Hutchins <duanehutchins@hotmail.com>]]
 #     BUILD_REQUIRES => {  }
+#     CCFLAGS => q[-fPIC -std=c99]
 #     CONFIGURE_REQUIRES => {  }
 #     DEFINE => q[]
 #     INC => q[-I.]
-#     LIBS => q[-lm -lcrypto -L/home/drh/public_html/Crypt-OpenSSL-FASTPBKDF2/fastpbkdf2/fastpbkdf2.h]
+#     LIBS => q[-lm -lcrypto]
 #     LICENSE => q[perl]
 #     MYEXTLIB => q[fastpbkdf2/libfastpbkdf2.so]
 #     NAME => q[Crypt::OpenSSL::FASTPBKDF2]
-#     OBJECT => q[$(O_FILES)]
 #     PREREQ_PM => {  }
 #     TEST_REQUIRES => {  }
 #     VERSION_FROM => q[lib/Crypt/OpenSSL/FASTPBKDF2.pm]
@@ -159,7 +159,7 @@ DLBASE = $(BASEEXT)
 VERSION_FROM = lib/Crypt/OpenSSL/FASTPBKDF2.pm
 INC = -I.
 DEFINE = 
-OBJECT = $(O_FILES)
+OBJECT = $(BASEEXT)$(OBJ_EXT)
 LDFROM = $(OBJECT)
 LINKTYPE = dynamic
 BOOTDEP = 
@@ -285,7 +285,7 @@ DISTVNAME = Crypt-OpenSSL-FASTPBKDF2-0.01
 
 # --- MakeMaker cflags section:
 
-CCFLAGS = -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fwrapv -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+CCFLAGS = -fPIC -std=c99
 OPTIMIZE = -O2 -g
 PERLTYPE = 
 MPOLLUTE = 

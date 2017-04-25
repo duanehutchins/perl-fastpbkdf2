@@ -159,69 +159,62 @@ S_croak_xs_usage(pTHX_ const CV *const cv, const char *const params)
 
 #line 161 "FASTPBKDF2.c"
 
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_hello); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_hello)
+XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface); /* prototype to pass -Wmissing-prototypes */
+XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface)
 {
     dVAR; dXSARGS;
-    if (items != 0)
-       croak_xs_usage(cv,  "");
+    dXSFUNCTION(SV *);
+    if (items < 4 || items > 5)
+       croak_xs_usage(cv,  "pw, salt, iterations, nout, data_buffer = NO_INIT");
     {
-#line 15 "FASTPBKDF2.xs"
-        char *pw = "password";
-        char *salt = "salt";
-        uint8_t out[64];
-#line 174 "FASTPBKDF2.c"
-#line 19 "FASTPBKDF2.xs"
-        fastpbkdf2_hmac_sha512(pw, strlen(pw), salt, strlen(salt), 1, out, sizeof out);
-        printf("pbkdf2 %s > %s\n", pw, out);
-#line 178 "FASTPBKDF2.c"
-    }
-    XSRETURN_EMPTY;
-}
-
-
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_is_even); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_is_even)
-{
-    dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "x");
-    {
-	int	RETVAL;
-	dXSTARG;
-	int	x = (int)SvIV(ST(0))
+	const uint8_t *	pw = (const uint8_t *)SvPV_nolen(ST(0))
 ;
-#line 25 "FASTPBKDF2.xs"
-        RETVAL = (x % 2 == 0);
-#line 197 "FASTPBKDF2.c"
-	XSprePUSH; PUSHi((IV)RETVAL);
+	const uint8_t *	salt = (const uint8_t *)SvPV_nolen(ST(1))
+;
+	uint32_t	iterations = (uint32_t)SvUV(ST(2))
+;
+	STRLEN	nout = (STRLEN)SvUV(ST(3))
+;
+	AV *	data_buffer;
+#line 21 "FASTPBKDF2.xs"
+        uint8_t * hashPtr;
+        SV * hash = newSVpv("",0);
+#line 183 "FASTPBKDF2.c"
+	SV *	RETVAL;
+
+	if (items >= 5) {
+	    STMT_START {
+		    SV* const xsub_tmp_sv = ST(4);
+		    SvGETMAGIC(xsub_tmp_sv);
+		    if (SvROK(xsub_tmp_sv) && SvTYPE(SvRV(xsub_tmp_sv)) == SVt_PVAV){
+			data_buffer = (AV*)SvRV(xsub_tmp_sv);
+		    }
+		    else{
+			Perl_croak(aTHX_ "%s: %s is not an ARRAY reference",
+				    "Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_interface",
+				    "data_buffer");
+		    }
+	    } STMT_END
+;
+	}
+#line 24 "FASTPBKDF2.xs"
+        Newx(hashPtr, nout+1, uint8_t);
+        sv_usepvn_flags(hash, hashPtr, nout, SV_SMAGIC | SV_HAS_TRAILING_NUL);
+#line 204 "FASTPBKDF2.c"
+    XSFUNCTION = XSINTERFACE_FUNC(SV *,cv,XSANY.any_dptr);
+
+	RETVAL = XSFUNCTION(pw, strlen(pw), salt, strlen(salt), iterations, hashPtr, nout);
+#line 31 "FASTPBKDF2.xs"
+        if(ST(5)) av_push(data_buffer, newSVpvn(hashPtr, nout)); // Append to @data_buffer array, if provided
+        hashPtr[nout] = '\0'; // NUL-terminated string
+        RETVAL = hash;
+#line 212 "FASTPBKDF2.c"
+	ST(4) = newRV((SV*)data_buffer);
+	SvSETMAGIC(ST(4));
+	ST(0) = RETVAL;
+	sv_2mortal(ST(0));
     }
     XSRETURN(1);
-}
-
-
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_round); /* prototype to pass -Wmissing-prototypes */
-XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_round)
-{
-    dVAR; dXSARGS;
-    if (items != 1)
-       croak_xs_usage(cv,  "arg");
-    {
-	double	arg = (double)SvNV(ST(0))
-;
-#line 32 "FASTPBKDF2.xs"
-        if (arg > 0.0) {
-                arg = floor(arg + 0.5);
-        } else if (arg < 0.0) {
-                arg = ceil(arg - 0.5);
-        } else {
-                arg = 0.0;
-        }
-#line 221 "FASTPBKDF2.c"
-	sv_setnv(ST(0), (double)arg);
-	SvSETMAGIC(ST(0));
-    }
-    XSRETURN_EMPTY;
 }
 
 #ifdef __cplusplus
@@ -244,9 +237,16 @@ XS_EXTERNAL(boot_Crypt__OpenSSL__FASTPBKDF2)
 #endif
     XS_VERSION_BOOTCHECK;
 
-        newXS("Crypt::OpenSSL::FASTPBKDF2::hello", XS_Crypt__OpenSSL__FASTPBKDF2_hello, file);
-        newXS("Crypt::OpenSSL::FASTPBKDF2::is_even", XS_Crypt__OpenSSL__FASTPBKDF2_is_even, file);
-        newXS("Crypt::OpenSSL::FASTPBKDF2::round", XS_Crypt__OpenSSL__FASTPBKDF2_round, file);
+    {
+        CV * cv;
+
+        cv = newXSproto_portable("Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_sha1", XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface, file, "$$$$;\\@");
+        XSINTERFACE_FUNC_SET(cv,fastpbkdf2_hmac_sha1);
+        cv = newXSproto_portable("Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_sha256", XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface, file, "$$$$;\\@");
+        XSINTERFACE_FUNC_SET(cv,fastpbkdf2_hmac_sha256);
+        cv = newXSproto_portable("Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_sha512", XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface, file, "$$$$;\\@");
+        XSINTERFACE_FUNC_SET(cv,fastpbkdf2_hmac_sha512);
+    }
 #if (PERL_REVISION == 5 && PERL_VERSION >= 9)
   if (PL_unitcheckav)
        call_list(PL_scopestack_ix, PL_unitcheckav);

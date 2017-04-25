@@ -1,58 +1,18 @@
 use ExtUtils::testlib;   # adds blib/* directories to @INC
-# use lib "./fastpbkdf2";
-use Crypt::OpenSSL::FASTPBKDF2;
-print Crypt::OpenSSL::FASTPBKDF2::is_even(2)? 'even':'not even';
-# print "\n";
-Crypt::OpenSSL::FASTPBKDF2::hello();
-# print map {"$_\n"} get_localtime(time);
-# hello();
-
-# use Inline C => config => LIBS => '-lcrypto -L/home/drh/public_html/Crypt-OpenSSL-FASTPBKDF2/fastpbkdf2/libfastpbkdf2.so';
-
-# use Inline C =>
-my $code = <<'END_OF_C_CODE';
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#
-#
-#
-
-
-#include <openssl/evp.h>
-#include "/home/drh/public_html/Crypt-OpenSSL-FASTPBKDF2/fastpbkdf2/fastpbkdf2.h"
-
-#define PASSWORD (const void *) "password", 8
-#define SALT (const void *) "saltsalt", 8
-#define WARMUP 4096
-#define ITERATIONS (1 << 22)
-
-#include <time.h>
-
-void get_localtime(SV * utc) {
-    const time_t utc_ = (time_t)SvIV(utc);
-    struct tm *ltime = localtime(&utc_);
-    Inline_Stack_Vars;
-
-    Inline_Stack_Reset;
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_year)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_mon)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_mday)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_hour)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_min)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_sec)));
-    Inline_Stack_Push(sv_2mortal(newSViv(ltime->tm_isdst)));
-    Inline_Stack_Done;
-}
-
-void hello() {
-    uint8_t out[64];
-    printf("Hello %s!\n", "mytest");
-    PKCS5_PBKDF2_HMAC(PASSWORD, SALT, 1, EVP_sha512(), (int) sizeof(out), out);
-    printf("pbkdf2 %s!\n", out);
-    fastpbkdf2_hmac_sha512(PASSWORD, SALT, 1, out, sizeof out);
-}
-END_OF_C_CODE
+use Crypt::OpenSSL::FASTPBKDF2 qw/fastpbkdf2_hmac_sha1 fastpbkdf2_hmac_sha512/;
+my $size = 32;
+my $out = '';
+my @buffer;
+my $testout = "\x86\x7f\x70\xcf\x1a\xde\x02\xcf\xf3\x75\x25\x99\xa3\xa5\x3d\xc4\xaf\x34\xc7\xa6\x69\x81\x5a\xe5\xd5\x13\x55\x4e\x1c\x8c\xf2\x52";
+# $out = Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_sha512("password", "salt", 2, 32, @data);
+$out = fastpbkdf2_hmac_sha1("password", "salt", 2, $size);
+print 'INOUT1: '.unpack('H*', $out);
+print "\n";
+$out = fastpbkdf2_hmac_sha512("password", "salt", 1, $size, @buffer);
+print 'INOUT2: '.unpack('H*', $buffer[0]);
+print "\n";
+print 'INOUT3: '.unpack('H*', $testout);
+print "\n";
+print "\ndone\n";
 
 1;

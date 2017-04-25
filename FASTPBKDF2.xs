@@ -7,34 +7,27 @@
 #include "fastpbkdf2/fastpbkdf2.h"
 
 MODULE = Crypt::OpenSSL::FASTPBKDF2		PACKAGE = Crypt::OpenSSL::FASTPBKDF2
-PROTOTYPES: DISABLE
+PROTOTYPES: ENABLE
 
-void
-hello()
-	PREINIT:
-        char *pw = "password";
-        char *salt = "salt";
-        uint8_t out[64];
-    CODE:
-        fastpbkdf2_hmac_sha512(pw, strlen(pw), salt, strlen(salt), 1, out, sizeof out);
-        printf("pbkdf2 %s > %s\n", pw, out);
-
-int
-is_even(int x)
-    CODE:
-        RETVAL = (x % 2 == 0);
-    OUTPUT:
-        RETVAL
-
-void
-round(double arg)
-    CODE:
-        if (arg > 0.0) {
-                arg = floor(arg + 0.5);
-        } else if (arg < 0.0) {
-                arg = ceil(arg - 0.5);
-        } else {
-                arg = 0.0;
-        }
-    OUTPUT:
-        arg
+SV *
+fastpbkdf2_hmac_interface(pw, salt, iterations, nout, IN_OUT data_buffer = NO_INIT)
+        const uint8_t *pw
+        const uint8_t *salt
+        uint32_t iterations
+        STRLEN nout
+        AV * &data_buffer
+    PROTOTYPE: $$$$;\@
+    PREINIT:
+        uint8_t * hashPtr;
+        SV * hash = newSVpv("",0);
+    INIT:
+        Newx(hashPtr, nout+1, uint8_t);
+        sv_usepvn_flags(hash, hashPtr, nout, SV_SMAGIC | SV_HAS_TRAILING_NUL);
+    C_ARGS:
+        pw, strlen(pw), salt, strlen(salt), iterations, hashPtr, nout
+    INTERFACE:
+        fastpbkdf2_hmac_sha1 fastpbkdf2_hmac_sha256 fastpbkdf2_hmac_sha512
+	POSTCALL:
+        if(ST(5)) av_push(data_buffer, newSVpvn(hashPtr, nout)); // Append to @data_buffer array, if provided
+        hashPtr[nout] = '\0'; // NUL-terminated string
+        RETVAL = hash;

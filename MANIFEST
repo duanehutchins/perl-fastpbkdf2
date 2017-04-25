@@ -2,10 +2,10 @@ Changes
 Makefile.PL
 MANIFEST
 FASTPBKDF2.xs
+FASTPBKDF2.h
 lib/Crypt/OpenSSL/FASTPBKDF2.pm
 README
 typemap
 ppport.h
-fastpbkdf2.h
-fastpbkdf2.o
+fastpbkdf2/fastpbkdf2.c
 t/Crypt-OpenSSL-FASTPBKDF2.t
