@@ -7,5 +7,6 @@ lib/Crypt/OpenSSL/FASTPBKDF2.pm
 README
 typemap
 ppport.h
+fastpbkdf2/README.md
 fastpbkdf2/fastpbkdf2.c
 t/Crypt-OpenSSL-FASTPBKDF2.t
