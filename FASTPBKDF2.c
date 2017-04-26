@@ -15,7 +15,15 @@
 #include "ppport.h"
 #include "fastpbkdf2/fastpbkdf2.h"
 
-#line 19 "FASTPBKDF2.c"
+static void dump(const char *label, uint8_t *data, size_t n)
+{
+  printf("%s: ", label);
+  for (size_t i = 0; i < n; i++)
+    printf("%02x", data[i]);
+  printf("\n");
+}
+
+#line 27 "FASTPBKDF2.c"
 #ifndef PERL_UNUSED_VAR
 #  define PERL_UNUSED_VAR(var) if (0) var = var
 #endif
@@ -157,7 +165,7 @@ S_croak_xs_usage(pTHX_ const CV *const cv, const char *const params)
 #define newXSproto_portable(name, c_impl, file, proto) (PL_Sv=(SV*)newXS(name, c_impl, file), sv_setpv(PL_Sv, proto), (CV*)PL_Sv)
 #endif /* !defined(newXS_flags) */
 
-#line 161 "FASTPBKDF2.c"
+#line 169 "FASTPBKDF2.c"
 
 XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface); /* prototype to pass -Wmissing-prototypes */
 XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface)
@@ -165,24 +173,30 @@ XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface)
     dVAR; dXSARGS;
     dXSFUNCTION(SV *);
     if (items < 4 || items > 5)
-       croak_xs_usage(cv,  "pw, salt, iterations, nout, data_buffer = NO_INIT");
+       croak_xs_usage(cv,  "pw, salt, iterations, nout, data_buffer = newAV()");
     {
-	const uint8_t *	pw = (const uint8_t *)SvPV_nolen(ST(0))
+	SV *	pw = ST(0)
 ;
-	const uint8_t *	salt = (const uint8_t *)SvPV_nolen(ST(1))
+	SV *	salt = ST(1)
 ;
 	uint32_t	iterations = (uint32_t)SvUV(ST(2))
 ;
 	STRLEN	nout = (STRLEN)SvUV(ST(3))
 ;
 	AV *	data_buffer;
-#line 21 "FASTPBKDF2.xs"
+#line 29 "FASTPBKDF2.xs"
+        STRLEN npw;
+        STRLEN nsalt;
+        uint8_t * cpw;
+        uint8_t * csalt;
         uint8_t * hashPtr;
         SV * hash = newSVpv("",0);
-#line 183 "FASTPBKDF2.c"
+#line 195 "FASTPBKDF2.c"
 	SV *	RETVAL;
 
-	if (items >= 5) {
+	if (items < 5)
+	    data_buffer = newAV();
+	else {
 	    STMT_START {
 		    SV* const xsub_tmp_sv = ST(4);
 		    SvGETMAGIC(xsub_tmp_sv);
@@ -197,18 +211,20 @@ XS_EUPXS(XS_Crypt__OpenSSL__FASTPBKDF2_fastpbkdf2_hmac_interface)
 	    } STMT_END
 ;
 	}
-#line 24 "FASTPBKDF2.xs"
+#line 36 "FASTPBKDF2.xs"
+        cpw = SvPVbyte(pw, npw);
+        csalt = SvPVbyte(salt, nsalt);
         Newx(hashPtr, nout+1, uint8_t);
         sv_usepvn_flags(hash, hashPtr, nout, SV_SMAGIC | SV_HAS_TRAILING_NUL);
-#line 204 "FASTPBKDF2.c"
+#line 220 "FASTPBKDF2.c"
     XSFUNCTION = XSINTERFACE_FUNC(SV *,cv,XSANY.any_dptr);
 
-	RETVAL = XSFUNCTION(pw, strlen(pw), salt, strlen(salt), iterations, hashPtr, nout);
-#line 31 "FASTPBKDF2.xs"
+	RETVAL = XSFUNCTION(cpw, npw, csalt, nsalt, iterations, hashPtr, nout);
+#line 45 "FASTPBKDF2.xs"
         if(ST(5)) av_push(data_buffer, newSVpvn(hashPtr, nout)); // Append to @data_buffer array, if provided
         hashPtr[nout] = '\0'; // NUL-terminated string
         RETVAL = hash;
-#line 212 "FASTPBKDF2.c"
+#line 228 "FASTPBKDF2.c"
 	ST(4) = newRV((SV*)data_buffer);
 	SvSETMAGIC(ST(4));
 	ST(0) = RETVAL;

@@ -1,18 +1,26 @@
 use ExtUtils::testlib;   # adds blib/* directories to @INC
-use Crypt::OpenSSL::FASTPBKDF2 qw/fastpbkdf2_hmac_sha1 fastpbkdf2_hmac_sha512/;
+use Crypt::OpenSSL::FASTPBKDF2 qw/fastpbkdf2_hmac_sha1 fastpbkdf2_hmac_sha256 fastpbkdf2_hmac_sha512/;
 my $size = 32;
+my $iter = 100;
 my $out = '';
 my @buffer;
 my $testout = "\x86\x7f\x70\xcf\x1a\xde\x02\xcf\xf3\x75\x25\x99\xa3\xa5\x3d\xc4\xaf\x34\xc7\xa6\x69\x81\x5a\xe5\xd5\x13\x55\x4e\x1c\x8c\xf2\x52";
 # $out = Crypt::OpenSSL::FASTPBKDF2::fastpbkdf2_hmac_sha512("password", "salt", 2, 32, @data);
-$out = fastpbkdf2_hmac_sha1("password", "salt", 2, $size);
-print 'INOUT1: '.unpack('H*', $out);
-print "\n";
-$out = fastpbkdf2_hmac_sha512("password", "salt", 1, $size, @buffer);
-print 'INOUT2: '.unpack('H*', $buffer[0]);
-print "\n";
-print 'INOUT3: '.unpack('H*', $testout);
-print "\n";
-print "\ndone\n";
+$out = fastpbkdf2_hmac_sha1("password", "salt", $iter, $size, @buffer);
+printf ("INOUT1: %s\n", unpack('H*', $out));
+$out = fastpbkdf2_hmac_sha256("password", "salt", $iter, $size, @buffer);
+printf ("INO256: %s\n", unpack('H*', $out));
+$out = fastpbkdf2_hmac_sha512("password", "salt", $iter, $size, @buffer);
+printf ("INO512: %s\n", unpack('H*', $out));
+# print "\n";
+# fastpbkdf2_hmac_sha512("password", "salt", $iter, $size, @buffer);
+printf ("BUF512: %s\n", unpack('H*', join('', @buffer)));
+# print 'INOUT2: '.unpack('H*', $buffer[0]);
+# print "\n";
+# print 'INOUT3: '.unpack('H*', $testout);
+# print "\n";
+# print "\ndone\n";
+
+
 
 1;

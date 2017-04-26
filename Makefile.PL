@@ -9,8 +9,6 @@ WriteMakefile(
 		ABSTRACT_FROM     => 'lib/Crypt/OpenSSL/FASTPBKDF2.pm', # retrieve abstract from module
 		AUTHOR            => 'Duane Hutchins <duanehutchins@hotmail.com>',
 		LICENSE           => 'perl',
-		#Value must be from legacy list of licenses here
-		#http://search.cpan.org/perldoc?Module%3A%3ABuild%3A%3AAPI
 		LIBS              => '-lm -lcrypto', # e.g., '-lm'
 		DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
 		INC               => '-I.', # e.g., '-I. -I/usr/include/other'
@@ -24,8 +22,8 @@ WriteMakefile(
 );
 
 # sub MY::postamble {
-# '
+# q[
 # $(MYEXTLIB): fastpbkdf2/Makefile
-# 				cd fastpbkdf2 && make
-# ';
+# 				cd fastpbkdf2 && make CFLAGS='-shared -o libfastpbkdf2.so -fPIC fastpbkdf2.c'
+# ];
 # }

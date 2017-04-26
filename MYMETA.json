@@ -1,5 +1,5 @@
 {
-   "abstract" : "Perl extension for blah blah blah",
+   "abstract" : "Perl wrapper for PBKDF2 keys derivation function of the OpenSSL library using fastpbkdf2",
    "author" : [
       "Duane Hutchins <duanehutchins@hotmail.com>"
    ],
