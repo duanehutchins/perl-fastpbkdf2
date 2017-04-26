@@ -18,7 +18,7 @@
 #     CONFIGURE_REQUIRES => {  }
 #     DEFINE => q[]
 #     INC => q[-I.]
-#     LIBS => q[-lm -lcrypto]
+#     LIBS => q[-lcrypto]
 #     LICENSE => q[perl]
 #     MYEXTLIB => q[fastpbkdf2/libfastpbkdf2.so]
 #     NAME => q[Crypt::OpenSSL::FASTPBKDF2]
@@ -297,7 +297,7 @@ MPOLLUTE =
 # See ExtUtils::Liblist for details
 #
 EXTRALIBS = -lcrypto
-LDLOADLIBS = -lm -lcrypto
+LDLOADLIBS = -lcrypto
 BSLOADLIBS = 
 
 
@@ -1024,6 +1024,9 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 
 
 # --- MakeMaker postamble section:
+
+$(MYEXTLIB): fastpbkdf2/Makefile
+				cd fastpbkdf2 && gcc -shared -o libfastpbkdf2.so -fPIC -std=c99 -O3 -g -Wall -Werror -Wextra -pedantic fastpbkdf2.c
 
 
 # End.

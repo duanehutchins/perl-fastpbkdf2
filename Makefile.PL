@@ -9,7 +9,7 @@ WriteMakefile(
 		ABSTRACT_FROM     => 'lib/Crypt/OpenSSL/FASTPBKDF2.pm', # retrieve abstract from module
 		AUTHOR            => 'Duane Hutchins <duanehutchins@hotmail.com>',
 		LICENSE           => 'perl',
-		LIBS              => '-lm -lcrypto', # e.g., '-lm'
+		LIBS              => '-lcrypto', # e.g., '-lm'
 		DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
 		INC               => '-I.', # e.g., '-I. -I/usr/include/other'
 	# Un-comment this if you add C files to link with later:
@@ -21,9 +21,9 @@ WriteMakefile(
 		CCFLAGS 					=> '-fPIC -std=c99',
 );
 
-# sub MY::postamble {
-# q[
-# $(MYEXTLIB): fastpbkdf2/Makefile
-# 				cd fastpbkdf2 && make CFLAGS='-shared -o libfastpbkdf2.so -fPIC fastpbkdf2.c'
-# ];
-# }
+sub MY::postamble {
+q[
+$(MYEXTLIB): fastpbkdf2/Makefile
+				cd fastpbkdf2 && gcc -shared -o libfastpbkdf2.so -fPIC -std=c99 -O3 -g -Wall -Werror -Wextra -pedantic fastpbkdf2.c
+];
+}
