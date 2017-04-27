@@ -4,7 +4,7 @@
 #include "XSUB.h"
 
 #include "ppport.h"
-#include "fastpbkdf2/fastpbkdf2.h"
+#include "src/fastpbkdf2.h"
 
 static void dump(const char *label, uint8_t *data, size_t n)
 {

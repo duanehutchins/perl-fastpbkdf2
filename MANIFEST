@@ -6,8 +6,8 @@ lib/Crypt/OpenSSL/FASTPBKDF2.pm
 README
 typemap
 ppport.h
-fastpbkdf2/README.md
-fastpbkdf2/Makefile
-fastpbkdf2/fastpbkdf2.c
-fastpbkdf2/fastpbkdf2.h
+src/README.md
+src/Makefile
+src/fastpbkdf2.c
+src/fastpbkdf2.h
 t/Crypt-OpenSSL-FASTPBKDF2.t
