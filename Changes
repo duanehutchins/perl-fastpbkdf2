@@ -1,7 +1,10 @@
-Revision history for Perl extension Crypt::OpenSSL::FASTPBKDF2.
+Revision history for perl-fastpbkdf2 (Crypt::OpenSSL::FASTPBKDF2)
 
-0.01  Wed Apr 19 09:28:13 2017
+0.01  2017-04-19
 	- original version; created by h2xs 1.23 with options
 		-Afn Crypt::OpenSSL::FASTPBKDF2
 	- Wrapped fastpbkdf2
 
+0.02  2017-05-02
+	- Changed from DynaLoader to XSLoader
+	- Added GNU GPLv3 License
